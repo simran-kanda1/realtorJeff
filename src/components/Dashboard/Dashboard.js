@@ -57,6 +57,7 @@ const Dashboard = () => {
     return String(timestamp);
   };
 
+
   // Function to get time ago format
   const getTimeAgo = (timestamp) => {
     if (!timestamp) return 'N/A';
@@ -316,17 +317,25 @@ const Dashboard = () => {
       const callsByDay = Array(7).fill(0);
       const messagesByDay = Array(7).fill(0);
       
+      // Get start of week
+      const startOfWeek = new Date(selectedDate);
+      const day = startOfWeek.getDay();
+      startOfWeek.setDate(selectedDate.getDate() - day);
+      startOfWeek.setHours(0, 0, 0, 0);
+      
       incomingCalls.forEach(call => {
         if (call.timestamp?.seconds) {
           const callDate = new Date(call.timestamp.seconds * 1000);
-          callsByDay[callDate.getDay()]++;
+          const dayIndex = callDate.getDay();
+          callsByDay[dayIndex]++;
         }
       });
       
       messages.forEach(message => {
         if (message.timestamp?.seconds) {
           const messageDate = new Date(message.timestamp.seconds * 1000);
-          messagesByDay[messageDate.getDay()]++;
+          const dayIndex = messageDate.getDay();
+          messagesByDay[dayIndex]++;
         }
       });
       
@@ -335,8 +344,90 @@ const Dashboard = () => {
         calls: callsByDay[index],
         messages: messagesByDay[index]
       }));
+    } else if (dateFilter === 'month') {
+      // Get days in month
+      const year = selectedDate.getFullYear();
+      const month = selectedDate.getMonth();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      
+      const callsByDay = Array(daysInMonth).fill(0);
+      const messagesByDay = Array(daysInMonth).fill(0);
+      
+      incomingCalls.forEach(call => {
+        if (call.timestamp?.seconds) {
+          const callDate = new Date(call.timestamp.seconds * 1000);
+          if (callDate.getFullYear() === year && callDate.getMonth() === month) {
+            const dayIndex = callDate.getDate() - 1;
+            if (dayIndex >= 0 && dayIndex < daysInMonth) {
+              callsByDay[dayIndex]++;
+            }
+          }
+        }
+      });
+      
+      messages.forEach(message => {
+        if (message.timestamp?.seconds) {
+          const messageDate = new Date(message.timestamp.seconds * 1000);
+          if (messageDate.getFullYear() === year && messageDate.getMonth() === month) {
+            const dayIndex = messageDate.getDate() - 1;
+            if (dayIndex >= 0 && dayIndex < daysInMonth) {
+              messagesByDay[dayIndex]++;
+            }
+          }
+        }
+      });
+      
+      // Group by weeks for better visualization in month view
+      const weeklyData = [];
+      for (let i = 0; i < daysInMonth; i += 7) {
+        const weekStart = i + 1;
+        const weekEnd = Math.min(i + 7, daysInMonth);
+        const weekCalls = callsByDay.slice(i, i + 7).reduce((sum, val) => sum + val, 0);
+        const weekMessages = messagesByDay.slice(i, i + 7).reduce((sum, val) => sum + val, 0);
+        
+        weeklyData.push({
+          label: `Week ${weekStart}-${weekEnd}`,
+          calls: weekCalls,
+          messages: weekMessages
+        });
+      }
+      
+      return weeklyData;
+    } else if (dateFilter === 'year') {
+      // Group by months
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const callsByMonth = Array(12).fill(0);
+      const messagesByMonth = Array(12).fill(0);
+      
+      const year = selectedDate.getFullYear();
+      
+      incomingCalls.forEach(call => {
+        if (call.timestamp?.seconds) {
+          const callDate = new Date(call.timestamp.seconds * 1000);
+          if (callDate.getFullYear() === year) {
+            const monthIndex = callDate.getMonth();
+            callsByMonth[monthIndex]++;
+          }
+        }
+      });
+      
+      messages.forEach(message => {
+        if (message.timestamp?.seconds) {
+          const messageDate = new Date(message.timestamp.seconds * 1000);
+          if (messageDate.getFullYear() === year) {
+            const monthIndex = messageDate.getMonth();
+            messagesByMonth[monthIndex]++;
+          }
+        }
+      });
+      
+      return months.map((month, index) => ({
+        label: month,
+        calls: callsByMonth[index],
+        messages: messagesByMonth[index]
+      }));
     }
-    // Add month and year logic as needed
+    
     return [];
   };
 
@@ -569,11 +660,11 @@ const Dashboard = () => {
                         </td>
                         <td>
                           <button
-                            className="action-btn view-btn"
+                            className="action-btn-view-btn"
                             onClick={() => openCallModal(lead.id)}
                             title="View lead details"
                           >
-                            <Eye size={16} />
+                            <Eye size={20} />
                           </button>
                         </td>
                       </tr>
@@ -654,7 +745,7 @@ const Dashboard = () => {
                           <td>
                             {associatedLead ? (
                               <button
-                                className="action-btn view-btn"
+                                className="action-btn-view-btn"
                                 onClick={() => openCallModal(associatedLead.id)}
                                 title="View lead details"
                               >
@@ -730,7 +821,7 @@ const Dashboard = () => {
                           <td>
                             {associatedLead && (
                               <button
-                                className="action-btn view-btn"
+                                className="action-btn-view-btn"
                                 onClick={() => openCallModal(associatedLead.id)}
                                 title="View lead details"
                               >
