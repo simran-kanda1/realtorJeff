@@ -248,6 +248,7 @@
 .call-modal-content {
   padding: 32px;
   max-height: 60vh;
+  -webkit-overflow-scrolling: touch;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(102, 126, 234, 0.3) transparent;
@@ -1038,13 +1039,18 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .call-modal {
-    max-width: 100%;
-    margin: 10px;
     max-height: 95vh;
+    width: 95%;
+    max-width: 95%;
+    margin: auto;
+    border-radius: 16px;
   }
   
   .call-modal-header {
     padding: 24px;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
   }
   
   .call-modal-content {
@@ -1053,6 +1059,12 @@
   
   .call-modal-tabs {
     padding: 0 24px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .overview-grid {
+    grid-template-columns: 1fr;
   }
   
   .tab-btn {
@@ -1066,11 +1078,13 @@
   }
   
   .lead-info h2 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
   }
   
   .action-buttons {
     flex-direction: column;
+    width: 100%;
+    justify-content: center;
   }
   
   .call-info-grid {

@@ -30,6 +30,7 @@ import {
   ChevronDown,
   ChevronUp
 } from 'lucide-react';
+import CallModal from '../CallModal/CallModal';
 import './CallLogs.css';
 
 const CallLogs = ({ onCallSelect, selectedLeadId }) => {

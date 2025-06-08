@@ -31,3 +31,9 @@ button, input, select {
   align-items: center;
   height: 100px;
 }
+
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+  }
+}

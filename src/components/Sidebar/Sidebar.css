@@ -67,3 +67,43 @@
   .nav-item.logout:hover {
     background-color: rgba(239, 68, 68, 0.1);
   }
+
+  .sidebar-toggle {
+    display: none; /* Hidden on desktop */
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background: transparent;
+    border: none;
+    color: #1a1c23;
+    z-index: 1100;
+  }
+  
+
+  @media (max-width: 768px) {
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px; /* Hide sidebar by default on mobile */
+      width: 250px;
+      height: 100%;
+      z-index: 1000;
+      transition: left 0.3s ease;
+    }
+  
+    .sidebar.open {
+      left: 0; /* Slide in when open */
+    }
+  
+    .sidebar-header h2 {
+      font-size: 1rem; /* Shrink header on small screens */
+    }
+
+    .sidebar-toggle {
+      display: block;
+    }
+  
+    .content-container {
+      padding: 10px; /* Reduce padding for mobile */
+    }
+  }
