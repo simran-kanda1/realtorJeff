@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Menu } from 'lucide-react';
-import { LayoutDashboard, Phone, AlertTriangle, FilesIcon, Activity, Settings, LogOut, Home, MessageCircle } from 'lucide-react';
+import { LayoutDashboard, Phone, AlertTriangle, FilesIcon, Activity, Settings, LogOut, Home, MessageCircle , Mail} from 'lucide-react';
 import './Sidebar.css';
 
 const Sidebar = () => {
@@ -47,6 +47,10 @@ const Sidebar = () => {
         <NavLink to="/leads" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeSidebar}>
           <FilesIcon size={20} />
           <span>Leads Logs</span>
+        </NavLink>
+        <NavLink to="/emails" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeSidebar}>
+          <Mail size={20} />
+          <span>Emails Logs</span>
         </NavLink>
         <NavLink to="/messages" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeSidebar}>
           <MessageCircle size={20} />

@@ -8,6 +8,7 @@ import AgentOverview from './components/AgentOverview/AgentOverview';
 import Notifications from './components/Notifications/Notifications';
 import Messages from './components/Messages/Messages';
 import Leads from './components/Leads/Leads';
+import EmailDashboard from './components/Emails/Emails';
 import './App.css';
 
 // Protected route component
@@ -79,6 +80,17 @@ function App() {
               <Sidebar />
               <div className="content-container">
                 <Messages />
+              </div>
+            </div>
+          </ProtectedRoute>
+        } />
+
+        <Route path="/emails" element={
+          <ProtectedRoute>
+            <div className="app-container">
+              <Sidebar />
+              <div className="content-container">
+                <EmailDashboard />
               </div>
             </div>
           </ProtectedRoute>

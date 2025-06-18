@@ -1,6 +1,6 @@
 [
     {
-      "origin": ["https://jeffthibodeau-simvanavoiceai.onrender.com"],
+      "origin": ["http://localhost:3000"],
       "method": ["GET, POST"],
       "maxAgeSeconds": 3600
     }
