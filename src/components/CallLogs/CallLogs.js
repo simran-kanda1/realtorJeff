@@ -45,6 +45,9 @@ const CallLogs = ({ onCallSelect, selectedLeadId }) => {
   const [sortOrder, setSortOrder] = useState('desc');
   const [expandedCall, setExpandedCall] = useState(null);
   const [leadCache, setLeadCache] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedLeadIdForModal, setSelectedLeadIdForModal] = useState(null);
+
 
   // Fetch all call logs from multiple sources
   useEffect(() => {
@@ -99,8 +102,7 @@ const CallLogs = ({ onCallSelect, selectedLeadId }) => {
                 direction: 'outgoing',
                 timestamp: { seconds: callTime.getTime() / 1000 },
                 duration: i === 1 ? (lead.callDuration || 0) : 0,
-                outcome: i === 1 && lead.transcript ? 'answered' : 
-                        i === 1 && lead.recordingUrl ? 'voicemail' : 'no_answer',
+                outcome: lead.status,
                 recordingUrl: i === 1 ? lead.recordingUrl : null,
                 transcript: i === 1 ? lead.transcript : null,
                 summary: i === 1 ? lead.summary : null,
@@ -281,7 +283,9 @@ const CallLogs = ({ onCallSelect, selectedLeadId }) => {
       case 'answered': return { icon: CheckCircle, color: '#10b981', text: 'Answered' };
       case 'voicemail': return { icon: AlertCircle, color: '#f59e0b', text: 'Voicemail' };
       case 'no_answer': return { icon: XCircle, color: '#ef4444', text: 'No Answer' };
-      case 'busy': return { icon: Phone, color: '#f59e0b', text: 'Busy' };
+      case 'failed' : return { icon: XCircle, color: '#ef4444', text: 'Failed' };
+      case 'call_failed' : return { icon: XCircle, color: '#ef4444', text: 'Failed' };
+      case 'call_initiated': return { icon: Phone, color: '#f59e0b', text: 'Call Initiated' };
       default: return { icon: Phone, color: '#64748b', text: 'Unknown' };
     }
   };
@@ -315,10 +319,12 @@ const CallLogs = ({ onCallSelect, selectedLeadId }) => {
   };
 
   const handleCallSelect = (call) => {
-    if (call.leadId && onCallSelect) {
-      onCallSelect(call.leadId);
+    if (call.leadId) {
+      setSelectedLeadIdForModal(call.leadId);
+      setIsModalOpen(true);
     }
   };
+  
 
   const toggleExpandCall = (callId) => {
     setExpandedCall(expandedCall === callId ? null : callId);
@@ -457,7 +463,7 @@ const CallLogs = ({ onCallSelect, selectedLeadId }) => {
                     </div>
                     
                     <div className="cell">
-                      <div className="lead-cell">
+                      <div className="lead-cell" onClick={() => handleCallSelect(call)} style={{ cursor: 'pointer' }}>
                         <div className="lead-avatar">
                           {call.leadName.charAt(0).toUpperCase()}
                         </div>
@@ -564,6 +570,16 @@ const CallLogs = ({ onCallSelect, selectedLeadId }) => {
           )}
         </div>
       </div>
+      {isModalOpen && selectedLeadIdForModal && (
+        <CallModal
+          leadId={selectedLeadIdForModal}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedLeadIdForModal(null);
+          }}
+          onUpdate={() => {}} // you can pass your update logic here if needed
+        />
+      )}
     </div>
   );
 };

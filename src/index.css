@@ -11,6 +11,12 @@ code {
     monospace;
 }
 
+/* Add this to your global CSS or index.css */
+body.modal-open {
+  overflow: hidden;
+}
+
+
 :root {
   --primary-color: #3b82f6;
   --secondary-color: #1e40af;

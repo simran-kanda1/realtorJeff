@@ -137,12 +137,31 @@ const Leads = () => {
     const now = new Date();
     const createdAt = lead.createdAt?.seconds ? new Date(lead.createdAt.seconds * 1000) : new Date(lead.createdAt);
     const daysSinceCreated = Math.floor((now - createdAt) / (1000 * 60 * 60 * 24));
-    
-    if (daysSinceCreated >= 7) return 'dormant';
-    if (lead.lastResponseTime || lead.responded) return 'responded';
-    if (lead.callAttempts > 0) return 'contacted';
-    return 'new';
+
+    return lead.status || 'new';
   };
+
+  const getDaysIntoOutreach = (lead) => {
+    if (!lead?.initialContactTime) return 0;
+    const start = new Date(lead.initialContactTime.seconds * 1000);
+    const now = new Date();
+    return Math.floor((now - start) / (1000 * 60 * 60 * 24));
+  };
+  
+  const hasContactBeenMade = (lead) => {
+    if (getLeadStatus(lead) === 'answered'){
+      return 'Yes'
+    }
+    if (getLeadStatus(lead) === 'responded_sms'){
+      return 'Yes'
+    }
+    return 'No';
+  };
+  
+  const getLastOutreachStep = (lead) => {
+    return lead.lastOutreachType || "initial";
+  };
+  
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -191,10 +210,12 @@ const Leads = () => {
 
   const handleLeadClick = (lead) => {
     setSelectedLead(lead);
+    document.body.classList.add('modal-open');
     setShowCallModal(true);
-  };
+  };  
 
   const handleCallModalClose = () => {
+    document.body.classList.remove('modal-open');
     setShowCallModal(false);
     setSelectedLead(null);
     // Refresh leads after modal closes
@@ -364,6 +385,9 @@ const Leads = () => {
               <th>Lead</th>
               <th>Contact</th>
               <th>Status</th>
+              <th>Days In Outreach</th>
+              <th>Contact Made?</th>
+              <th>Last Step</th>
               <th>Form Type</th>
               <th>Calls</th>
               <th>Created</th>
@@ -388,7 +412,7 @@ const Leads = () => {
                     </div>
                   </td>
                   
-                  <td className="contact-info">
+                  <td className="contact">
                     <div className="contact-item">
                       <Phone size={14} />
                       {lead.phone || 'N/A'}
@@ -408,6 +432,11 @@ const Leads = () => {
                       {status.charAt(0).toUpperCase() + status.slice(1)}
                     </div>
                   </td>
+
+                  <td>{getDaysIntoOutreach(lead)}</td>
+                  <td>{hasContactBeenMade(lead)}</td>
+                  <td>{getLastOutreachStep(lead)}</td>
+
                   
                   <td className="form-type">
                     {lead.formType || 'N/A'}
