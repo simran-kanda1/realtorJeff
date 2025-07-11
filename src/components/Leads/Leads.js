@@ -138,7 +138,7 @@ const Leads = () => {
     const createdAt = lead.createdAt?.seconds ? new Date(lead.createdAt.seconds * 1000) : new Date(lead.createdAt);
     const daysSinceCreated = Math.floor((now - createdAt) / (1000 * 60 * 60 * 24));
 
-    return lead.status || 'new';
+    return lead.displayStatus || 'dormant';
   };
 
   const getDaysIntoOutreach = (lead) => {
